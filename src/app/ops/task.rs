@@ -6,8 +6,6 @@ use crate::storage;
 use chrono::NaiveDate;
 
 impl App {
-    // -- quick CRUD (title only) -------------------------------------------
-
     pub fn start_adding(&mut self) {
         if self.board.is_empty() {
             self.status = "No columns — press 'a' or 'C' to add a column first".to_string();
@@ -137,8 +135,6 @@ impl App {
     pub fn toggle_help(&mut self) {
         self.show_help = !self.show_help;
     }
-
-    // -- rich task features -------------------------------------------------
 
     pub fn cycle_priority(&mut self) {
         if let Some(task) = self.selected_task_mut() {

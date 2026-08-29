@@ -1,7 +1,4 @@
 //! board/mod.rs — Re-exports for the board model
-//!
-//! Highly customizable: `Task` (deadline, priority, tags), `Column`, `Board`
-//! with dynamic columns. Split into submodules for readability.
 
 pub mod board;
 pub mod column;

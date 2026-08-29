@@ -30,7 +30,6 @@ impl std::fmt::Display for Priority {
 }
 
 impl Priority {
-    /// Cycle Low → Medium → High → Urgent → Low
     pub fn next(self) -> Self {
         match self {
             Self::Low => Self::Medium,
@@ -40,7 +39,6 @@ impl Priority {
         }
     }
 
-    /// One-char icon for compact list view
     pub fn icon(self) -> &'static str {
         match self {
             Self::Low => "·",

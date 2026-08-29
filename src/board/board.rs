@@ -9,11 +9,8 @@ fn default_board_title() -> String {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Board {
-    /// Ordered columns — user-customizable via `B` menu.
     pub columns: Vec<Column>,
-    /// Next id to assign; bumped on every `Task` creation.
     pub next_id: u32,
-    /// Board title (shown in footer). Customizable.
     #[serde(default = "default_board_title")]
     pub title: String,
 }
@@ -89,9 +86,6 @@ impl Board {
         self.columns.is_empty()
     }
 
-    // -- column management (highly customizable board) ---------------------
-
-    /// Add a new empty column at the end.
     pub fn add_column(&mut self, name: String) {
         let name = name.trim();
         if name.is_empty() {
@@ -103,7 +97,6 @@ impl Board {
         });
     }
 
-    /// Rename column at `idx`.
     pub fn rename_column(&mut self, idx: usize, new_name: String) {
         let new_name = new_name.trim();
         if new_name.is_empty() || idx >= self.columns.len() {
@@ -112,7 +105,6 @@ impl Board {
         self.columns[idx].name = new_name.to_string();
     }
 
-    /// Delete column at `idx`. Allows deleting last — board may become empty.
     pub fn delete_column(&mut self, idx: usize) -> Option<Column> {
         if self.columns.is_empty() {
             return None;
@@ -124,7 +116,6 @@ impl Board {
         }
     }
 
-    /// Move column left/right (reorder).
     pub fn move_column(&mut self, idx: usize, dir: i32) -> Option<usize> {
         let new_idx = idx as i32 + dir;
         if new_idx < 0 || new_idx >= self.columns.len() as i32 {
@@ -136,12 +127,10 @@ impl Board {
         Some(new_idx)
     }
 
-    /// Create a fresh board from the default template (for onboarding).
     pub fn reset_to_template(&mut self) {
         *self = Self::default();
     }
 
-    /// Clear all columns — start completely from scratch.
     pub fn clear(&mut self) {
         self.columns.clear();
     }

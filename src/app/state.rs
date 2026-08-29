@@ -2,23 +2,15 @@
 
 use crate::board::{Board, Priority};
 
-/// What the keyboard does right now
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum InputMode {
     Normal,
-    /// Quick add: title only
     Adding,
-    /// Quick edit: title only
     Editing,
-    /// Full task form (add or edit)
     TaskForm,
-    /// Viewing detail of a task (read-only)
     ViewingTask,
-    /// Board manager overlay
     BoardManager,
-    /// Adding a new column (buffer = name)
     AddingColumn,
-    /// Renaming existing column
     RenamingColumn,
 }
 
@@ -69,7 +61,6 @@ pub struct TaskForm {
     pub priority: Priority,
     pub tags: String,
     pub field: TaskFormField,
-    /// None => add, Some(id) => edit
     pub editing_id: Option<u32>,
 }
 
@@ -87,32 +78,20 @@ impl Default for TaskForm {
     }
 }
 
-/// Central application state — single source of truth
 pub struct App {
-    /// Persisted Kanban board.
     pub board: Board,
-    /// Highlighted column
     pub selected_col: usize,
-    /// Highlighted task within column
     pub selected_row: usize,
-    /// Current mode
     pub input_mode: InputMode,
-    /// Buffer for quick add/edit & column name
     pub input_buffer: String,
-    /// Quick-edit task id
     pub(crate) editing_id: Option<u32>,
-    /// Full task form
     pub task_form: TaskForm,
-    /// Help overlay
     pub show_help: bool,
-    /// Footer status
     pub status: String,
-    /// Column being renamed
     pub(crate) renaming_col_idx: Option<usize>,
 }
 
 impl App {
-    /// Create app, loading board from disk.
     pub fn new() -> Self {
         let board = crate::storage::load_board();
         let mut app = Self {

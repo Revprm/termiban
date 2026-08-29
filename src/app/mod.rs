@@ -1,7 +1,4 @@
 //! app/mod.rs — Application state & handlers
-//!
-//! Highly modular: state + ops + key handlers split for readability.
-//! Re-exports the public API used by `main` and `ui`.
 
 pub mod handlers;
 pub mod ops;
