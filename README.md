@@ -40,7 +40,7 @@ All changes auto-save.
 Requires Rust 1.98+.
 
 ```bash
-git clone https://github.com/yourname/termiban
+git clone https://github.com/revprm/termiban
 cd termiban
 cargo build --release
 # binary at target/release/termiban
