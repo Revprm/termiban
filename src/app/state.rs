@@ -21,6 +21,7 @@ pub enum TaskFormField {
     Deadline,
     Priority,
     Tags,
+    Url,
 }
 
 impl TaskFormField {
@@ -30,25 +31,28 @@ impl TaskFormField {
             Self::Description => Self::Deadline,
             Self::Deadline => Self::Priority,
             Self::Priority => Self::Tags,
-            Self::Tags => Self::Title,
+            Self::Tags => Self::Url,
+            Self::Url => Self::Title,
         }
     }
     pub fn prev(self) -> Self {
         match self {
-            Self::Title => Self::Tags,
+            Self::Title => Self::Url,
             Self::Description => Self::Title,
             Self::Deadline => Self::Description,
             Self::Priority => Self::Deadline,
             Self::Tags => Self::Priority,
+            Self::Url => Self::Tags,
         }
     }
     pub fn label(self) -> &'static str {
         match self {
             Self::Title => "Title",
-            Self::Description => "Description",
+            Self::Description => "Description (long, wraps)",
             Self::Deadline => "Deadline (YYYY-MM-DD)",
             Self::Priority => "Priority",
             Self::Tags => "Tags (comma-separated)",
+            Self::Url => "URL (https://...)",
         }
     }
 }
@@ -60,6 +64,7 @@ pub struct TaskForm {
     pub deadline: String,
     pub priority: Priority,
     pub tags: String,
+    pub url: String,
     pub field: TaskFormField,
     pub editing_id: Option<u32>,
 }
@@ -72,6 +77,7 @@ impl Default for TaskForm {
             deadline: String::new(),
             priority: Priority::Medium,
             tags: String::new(),
+            url: String::new(),
             field: TaskFormField::Title,
             editing_id: None,
         }

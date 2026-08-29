@@ -26,16 +26,17 @@ impl Default for Board {
                         Task {
                             id: 1,
                             title: "Set up Termiban".to_string(),
-                            description: "Customize your board with `B`, add tasks with `n`".to_string(),
+                            description: "Customize your board with `B`, add tasks with `n`. Description can be as long as you want — feel free to write paragraphs, notes, checklists, or paste long docs. Use full form `N` for editing.".to_string(),
                             deadline: None,
                             priority: Priority::High,
                             tags: vec!["setup".into()],
                             created_at: Some(chrono::Local::now().format("%Y-%m-%d").to_string()),
+                            url: Some("https://github.com/yourname/termiban".to_string()),
                         },
                         Task {
                             id: 2,
                             title: "Plan your first board".to_string(),
-                            description: "Add deadlines, priorities, tags — all persisted".to_string(),
+                            description: "Add deadlines, priorities, tags, URLs — all persisted. Example long description:\n\nGoals:\n- Define columns (Backlog, Doing, Review)\n- Add tasks with links to specs\n- Track deadlines (overdue in red)\n\nTip: Press Enter to view full description with wrapping.".to_string(),
                             deadline: Some(
                                 (chrono::Local::now() + chrono::Duration::days(2))
                                     .format("%Y-%m-%d")
@@ -44,6 +45,7 @@ impl Default for Board {
                             priority: Priority::Medium,
                             tags: vec!["planning".into()],
                             created_at: Some(chrono::Local::now().format("%Y-%m-%d").to_string()),
+                            url: None,
                         },
                     ],
                 },
@@ -52,11 +54,12 @@ impl Default for Board {
                     tasks: vec![Task {
                         id: 3,
                         title: "Learn Ratatui shortcuts".to_string(),
-                        description: "Press `?` for help, `Enter` to view task details".to_string(),
+                        description: "Press `?` for help, `Enter` to view task details. Long descriptions are fully supported and wrap in the detail popup — paste as much as you need.".to_string(),
                         deadline: None,
                         priority: Priority::Medium,
                         tags: vec![],
                         created_at: Some(chrono::Local::now().format("%Y-%m-%d").to_string()),
+                        url: Some("https://ratatui.rs".to_string()),
                     }],
                 },
                 Column {
@@ -64,11 +67,12 @@ impl Default for Board {
                     tasks: vec![Task {
                         id: 4,
                         title: "Install Rust".to_string(),
-                        description: "rustup.rs — you are ready!".to_string(),
+                        description: "rustup.rs — you are ready! This description can also be long and include a URL below.".to_string(),
                         deadline: None,
                         priority: Priority::Low,
                         tags: vec!["done".into()],
                         created_at: Some(chrono::Local::now().format("%Y-%m-%d").to_string()),
+                        url: Some("https://rustup.rs".to_string()),
                     }],
                 },
             ],

@@ -54,6 +54,7 @@ impl App {
                         priority: Priority::default(),
                         tags: vec![],
                         created_at: Some(chrono::Local::now().format("%Y-%m-%d").to_string()),
+                        url: None,
                     };
                     self.board.next_id += 1;
                     col.tasks.push(task);
@@ -136,6 +137,26 @@ impl App {
         self.show_help = !self.show_help;
     }
 
+    pub fn open_selected_url(&mut self) {
+        if let Some(task) = self.selected_task() {
+            if let Some(url) = &task.url {
+                let url = url.trim();
+                if url.is_empty() {
+                    self.status = "No URL for this task".to_string();
+                    return;
+                }
+                match std::process::Command::new("xdg-open").arg(url).spawn() {
+                    Ok(_) => self.status = format!("Opening URL: {url}"),
+                    Err(e) => self.status = format!("Failed to open URL: {e}"),
+                }
+            } else {
+                self.status = "No URL for this task".to_string();
+            }
+        } else {
+            self.status = "No task selected".to_string();
+        }
+    }
+
     pub fn cycle_priority(&mut self) {
         if let Some(task) = self.selected_task_mut() {
             let old = task.priority;
@@ -175,6 +196,7 @@ impl App {
             deadline: String::new(),
             priority: Priority::Medium,
             tags: String::new(),
+            url: String::new(),
             field: TaskFormField::Title,
             editing_id: None,
         };
@@ -191,6 +213,7 @@ impl App {
                 deadline: task.deadline.clone().unwrap_or_default(),
                 priority: task.priority,
                 tags: task.tags.join(", "),
+                url: task.url.clone().unwrap_or_default(),
                 field: TaskFormField::Title,
                 editing_id: Some(task.id),
             };
@@ -231,6 +254,18 @@ impl App {
             .filter(|s| !s.is_empty())
             .collect();
 
+        let url_opt = {
+            let u = self.task_form.url.trim();
+            if u.is_empty() {
+                None
+            } else if !u.starts_with("http://") && !u.starts_with("https://") {
+                self.status = "Invalid URL — must start with http:// or https:// or leave empty".to_string();
+                return;
+            } else {
+                Some(u.to_string())
+            }
+        };
+
         if let Some(id) = self.task_form.editing_id {
             let mut found = false;
             for col in &mut self.board.columns {
@@ -241,6 +276,7 @@ impl App {
                         task.deadline = deadline_opt.clone();
                         task.priority = self.task_form.priority;
                         task.tags = tags_vec.clone();
+                        task.url = url_opt.clone();
                         found = true;
                         break;
                     }
@@ -268,6 +304,7 @@ impl App {
                     priority: self.task_form.priority,
                     tags: tags_vec.clone(),
                     created_at: Some(chrono::Local::now().format("%Y-%m-%d").to_string()),
+                    url: url_opt.clone(),
                 };
                 self.board.next_id += 1;
                 col.tasks.push(task);
@@ -306,6 +343,7 @@ impl App {
             TaskFormField::Deadline => self.task_form.deadline.push(c),
             TaskFormField::Priority => {} // cycled with 'p'
             TaskFormField::Tags => self.task_form.tags.push(c),
+            TaskFormField::Url => self.task_form.url.push(c),
         }
     }
 
@@ -323,6 +361,9 @@ impl App {
             TaskFormField::Priority => {}
             TaskFormField::Tags => {
                 self.task_form.tags.pop();
+            }
+            TaskFormField::Url => {
+                self.task_form.url.pop();
             }
         }
     }

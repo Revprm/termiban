@@ -26,10 +26,11 @@ Built with Rust, `ratatui` + `crossterm`. Clean, modular codebase.
 - Welcome screen when empty guides you to your first column
 
 **Tasks**
-- **Title** and **description**
+- **Title** and **description** — description is *long* (wraps, no limit, shown full in detail view)
 - **Deadline** (`YYYY-MM-DD`) — overdue in red, today in yellow
 - **Priority** — Low · Medium ▲ High ‼ Urgent (color + icon, `p` to cycle)
 - **Tags** — comma-separated, e.g. `work, bug`
+- **URL** — `https://…` (`🔗` in list, `o` to open in browser, `https://` required)
 
 All changes auto-save.
 
@@ -90,16 +91,16 @@ Or delete columns one by one with `B` → `d` until empty — the welcome screen
 - `H`/`L` — move task to prev/next column
 
 **Tasks**
-- `n` — quick add (title only) · `N` — full add (all fields)
+- `n` — quick add (title only) · `N` — full add (all fields incl. URL + long desc)
 - `e` — quick edit · `E` — full edit
-- `Enter` / `v` — view details
-- `p` — cycle priority
+- `Enter` / `v` — view details (wrapped long description + URL)
+- `p` — cycle priority · `o` — open URL
 - `d` / `x` — delete
 
-**In full form (`N`/`E`)**
+**In full form (`N`/`E`) — 6 fields: Title → Description (long) → Deadline → Priority → Tags → URL**
 - `Tab` / `Shift+Tab` — next/prev field
 - `p` on Priority — cycle
-- `Enter` — save, `Esc` — cancel
+- `Enter` — save (validates `YYYY-MM-DD` and `https://`), `Esc` — cancel
 
 **Board**
 - `B` — board manager → `a` add, `r` rename, `d` delete, `t` template, `c` clear, `H`/`L` move
@@ -118,6 +119,8 @@ Auto-saved JSON. Location (in order):
 3. `~/.local/share/termiban/board.json`
 4. `./board.json`
 
+Long descriptions? Paste as much as you want — detail view wraps, no hard limit. Add a URL for quick `o` open.
+
 Edit `board.json` by hand if you like:
 
 ```json
@@ -126,7 +129,7 @@ Edit `board.json` by hand if you like:
   "columns": [
     {"name": "Backlog", "tasks": []},
     {"name": "Doing", "tasks": [
-      {"id":1,"title":"Fix login","description":"...","deadline":"2026-09-01","priority":"high","tags":["work"],"created_at":"2026-08-30"}
+      {"id":1,"title":"Fix login","description":"Long notes here...\nMultiple paragraphs wrap in detail view.","deadline":"2026-09-01","priority":"high","tags":["work"],"url":"https://github.com/me/proj","created_at":"2026-08-30"}
     ]}
   ],
   "next_id": 2

@@ -12,7 +12,7 @@ use ratatui::{
 };
 
 pub fn render_task_detail_popup(f: &mut Frame, app: &App, area: Rect) {
-    let popup_area = centered_rect(70, 60, area);
+    let popup_area = centered_rect(70, 70, area);
     f.render_widget(Clear, popup_area);
 
     let task = app.selected_task();
@@ -72,17 +72,42 @@ pub fn render_task_detail_popup(f: &mut Frame, app: &App, area: Rect) {
                 ),
             ]),
             Line::from(vec![
+                Span::styled("URL:      ", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                Span::styled(
+                    if let Some(url) = &t.url {
+                        if url.trim().is_empty() { "(none)".to_string() } else { url.clone() }
+                    } else {
+                        "(none)".to_string()
+                    },
+                    if t.url.as_ref().map_or(true, |u| u.trim().is_empty()) {
+                        Style::default().fg(Color::DarkGray).add_modifier(Modifier::ITALIC)
+                    } else {
+                        Style::default().fg(Color::Blue).add_modifier(Modifier::UNDERLINED)
+                    },
+                ),
+            ]),
+            Line::from(vec![
                 Span::styled("Created:  ", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
                 Span::styled(t.created_at.clone().unwrap_or_else(|| "(unknown)".into()), Style::default().fg(Color::DarkGray)),
             ]),
             Line::from(""),
-            Line::from(Span::styled("Description:", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+            Line::from(vec![
+                Span::styled("Description", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                Span::styled(
+                    if t.description.is_empty() {
+                        " (empty — long text supported, wraps)".to_string()
+                    } else {
+                        format!(" ({} chars, wraps) — long descriptions fully supported:", t.description_len())
+                    },
+                    Style::default().fg(Color::DarkGray).add_modifier(Modifier::ITALIC),
+                ),
+            ]),
             Line::from(Span::styled(
                 if t.description.is_empty() { "(no description)".to_string() } else { t.description.clone() },
                 Style::default().fg(Color::White),
             )),
             Line::from(""),
-            Line::from(Span::styled("— Press Enter/Esc to close —", Style::default().fg(Color::DarkGray).add_modifier(Modifier::ITALIC))),
+            Line::from(Span::styled("— Press Enter/Esc to close, 'o' to open URL —", Style::default().fg(Color::DarkGray).add_modifier(Modifier::ITALIC))),
         ]
     } else {
         vec![Line::from(Span::styled("(no task selected)", Style::default().fg(Color::DarkGray)))]

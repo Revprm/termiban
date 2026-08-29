@@ -36,6 +36,7 @@ mod tests {
                         priority: Priority::Medium,
                         tags: vec![],
                         created_at: None,
+                        url: None,
                     }],
                 },
                 Column {

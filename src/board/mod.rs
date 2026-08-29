@@ -32,6 +32,7 @@ mod tests {
             priority: Priority::Urgent,
             tags: vec!["work".into(), "bug".into()],
             created_at: Some("2026-01-01".into()),
+            url: Some("https://example.com".into()),
         };
         let json = serde_json::to_string(&task).unwrap();
         let back: Task = serde_json::from_str(&json).unwrap();
@@ -85,6 +86,7 @@ mod tests {
             priority: Priority::Medium,
             tags: vec![],
             created_at: None,
+            url: None,
         };
         assert!(t.is_overdue());
         let t2 = Task {

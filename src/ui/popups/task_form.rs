@@ -11,7 +11,7 @@ use ratatui::{
 };
 
 pub fn render_task_form_popup(f: &mut Frame, app: &App, area: Rect) {
-    let popup_area = centered_rect(70, 60, area);
+    let popup_area = centered_rect(70, 70, area);
     f.render_widget(Clear, popup_area);
 
     let is_edit = app.task_form.editing_id.is_some();
@@ -31,6 +31,7 @@ pub fn render_task_form_popup(f: &mut Frame, app: &App, area: Rect) {
         TaskFormField::Deadline,
         TaskFormField::Priority,
         TaskFormField::Tags,
+        TaskFormField::Url,
     ] {
         let is_focused = form.field == field;
         let focus_marker = if is_focused { "▶ " } else { "  " };
@@ -62,12 +63,26 @@ pub fn render_task_form_popup(f: &mut Frame, app: &App, area: Rect) {
             }
             TaskFormField::Description => {
                 if form.description.is_empty() && !is_focused {
-                    "(no description)".to_string()
+                    "(no description — long text supported, wraps)".to_string()
                 } else if is_focused {
-                    format!("{}█", form.description)
+                     let len = form.description.chars().count();
+                    let hint = if len > 200 {
+                        format!(" ({} chars, wraps) ", len)
+                    } else if len > 0 {
+                        format!(" ({} chars) ", len)
+                    } else {
+                        String::new()
+                    };
+                    format!("{}{}█", form.description, hint)
                 } else {
-                    let preview: String = form.description.chars().take(40).collect();
-                    if form.description.len() > 40 { format!("{preview}…") } else { preview }
+                    // Preview for not focused: show first 60 chars + length
+                    let len = form.description.chars().count();
+                    if len <= 60 {
+                        form.description.clone()
+                    } else {
+                        let preview: String = form.description.chars().take(60).collect();
+                        format!("{preview}… ({} chars)", len)
+                    }
                 }
             }
             TaskFormField::Deadline => {
@@ -78,6 +93,15 @@ pub fn render_task_form_popup(f: &mut Frame, app: &App, area: Rect) {
             TaskFormField::Tags => {
                 let v = if form.tags.is_empty() { "(none)".to_string() } else { form.tags.clone() };
                 if is_focused { format!("{}█", form.tags) } else { v }
+            }
+            TaskFormField::Url => {
+                if form.url.is_empty() && !is_focused {
+                    "(none — e.g. https://...)".to_string()
+                } else if is_focused {
+                    format!("{}█", form.url)
+                } else {
+                    form.url.clone()
+                }
             }
         };
 

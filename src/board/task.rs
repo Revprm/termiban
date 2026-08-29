@@ -18,9 +18,42 @@ pub struct Task {
     pub tags: Vec<String>,
     #[serde(default)]
     pub created_at: Option<String>,
+    #[serde(default)]
+    pub url: Option<String>,
 }
 
 impl Task {
+    pub fn description_len(&self) -> usize {
+        self.description.chars().count()
+    }
+
+    pub fn is_long_description(&self) -> bool {
+        self.description_len() > 200
+    }
+
+    #[allow(dead_code)]
+    pub fn description_preview(&self, max: usize) -> String {
+        if self.description.chars().count() <= max {
+            self.description.clone()
+        } else {
+            let preview: String = self.description.chars().take(max).collect();
+            format!("{preview}…")
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn url_valid(url: &Option<String>) -> bool {
+        if let Some(u) = url {
+            let t = u.trim();
+            if t.is_empty() {
+                return true;
+            }
+            t.starts_with("http://") || t.starts_with("https://")
+        } else {
+            true
+        }
+    }
+
     pub fn deadline_date(&self) -> Option<NaiveDate> {
         self.deadline
             .as_deref()

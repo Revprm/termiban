@@ -4,13 +4,6 @@ compile_error!("Termiban is Linux-only — macOS and Windows are not supported")
 use crate::board::Board;
 use std::{fs, path::PathBuf};
 
-/// Resolve data path — Linux-only
-///
-/// Priority:
-/// 1. $TERMIBAN_DATA_PATH or $TERMIBAN_DATA (portable override)
-/// 2. $XDG_DATA_HOME/termiban/board.json (XDG)
-/// 3. ~/.local/share/termiban/board.json (fallback)
-/// 4. ./board.json (dev fallback)
 pub fn data_path() -> PathBuf {
     if let Ok(p) = std::env::var("TERMIBAN_DATA_PATH") {
         if !p.is_empty() {
@@ -103,6 +96,7 @@ mod tests {
             priority: crate::board::Priority::High,
             tags: vec!["test".into()],
             created_at: Some("2026-01-01".into()),
+            url: Some("https://example.com".into()),
         });
 
         save_board(&board);

@@ -22,6 +22,8 @@ impl App {
                 self.delete_selected();
             }
             KeyCode::Char('p') if key.modifiers.is_empty() => self.cycle_priority(),
+            KeyCode::Char('o') if key.modifiers.is_empty() => self.open_selected_url(),
+            KeyCode::Char('O') if key.modifiers == KeyModifiers::SHIFT => self.open_selected_url(),
             _ => {}
         }
         false

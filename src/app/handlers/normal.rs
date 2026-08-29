@@ -87,6 +87,15 @@ impl App {
             return false;
         }
 
+        if key.code == KeyCode::Char('o') && key.modifiers.is_empty() {
+            self.open_selected_url();
+            return false;
+        }
+        if key.code == KeyCode::Char('O') && key.modifiers == KeyModifiers::SHIFT {
+            self.open_selected_url();
+            return false;
+        }
+
         if matches!(key.code, KeyCode::Char('h') | KeyCode::Left) {
             if key.modifiers == KeyModifiers::SHIFT {
                 self.move_task_to_prev_col();

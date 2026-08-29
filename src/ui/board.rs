@@ -150,8 +150,25 @@ pub fn render_board(f: &mut Frame, app: &App, area: Rect) {
                     }
                 }
 
+                if let Some(url) = &task.url {
+                    if !url.trim().is_empty() {
+                        spans.push(Span::styled(" 🔗", Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD)));
+                    }
+                }
                 if !task.description.is_empty() {
-                    spans.push(Span::styled(" ≡", Style::default().fg(Color::DarkGray).add_modifier(Modifier::ITALIC)));
+                    let icon = if task.is_long_description() { " 📄" } else { " ≡" };
+                    let desc_style = if task.is_long_description() {
+                        Style::default().fg(Color::Yellow).add_modifier(Modifier::ITALIC)
+                    } else {
+                        Style::default().fg(Color::DarkGray).add_modifier(Modifier::ITALIC)
+                    };
+                    spans.push(Span::styled(icon, desc_style));
+                    if task.is_long_description() {
+                        spans.push(Span::styled(
+                            format!(" ({} chars)", task.description_len()),
+                            Style::default().fg(Color::DarkGray),
+                        ));
+                    }
                 }
 
                 let line = Line::from(spans);
