@@ -1,25 +1,17 @@
-//! storage.rs — Cross-platform persistence for Termiban
-//!
-//! Responsibilities:
-//! * `data_path()` — resolve where `board.json` lives on Linux / macOS / Windows
-//! * `load_board()` / `save_board()` — JSON serde with graceful fallback
+#[cfg(target_os = "windows")]
+compile_error!("Termiban is Unix-only (Linux and macOS) — Windows is not supported");
 
 use crate::board::Board;
 use std::{fs, path::PathBuf};
 
-// ---------------------------------------------------------------------------
-// Path resolution — self-hosted, no external `dirs` crate needed
-// ---------------------------------------------------------------------------
-
-/// Resolve the JSON file path.
+/// Resolve data path — Unix-only (Linux and macOS)
 ///
 /// Priority:
-/// 1. `$TERMIBAN_DATA_PATH` or `$TERMIBAN_DATA` (explicit override, portable mode)
-/// 2. Windows: `%APPDATA%\termiban\board.json`
-/// 3. `$XDG_DATA_HOME/termiban/board.json`
-/// 4. `~/.local/share/termiban/board.json` (Linux/macOS default)
-/// 5. `%USERPROFILE%\AppData\Roaming\termiban\board.json` (Windows fallback)
-/// 6. `./board.json` (dev / fallback)
+/// 1. $TERMIBAN_DATA_PATH or $TERMIBAN_DATA (portable override)
+/// 2. $XDG_DATA_HOME/termiban/board.json (XDG, Linux + macOS if set)
+/// 3. ~/Library/Application Support/termiban/board.json (macOS native)
+/// 4. ~/.local/share/termiban/board.json (Linux + macOS fallback)
+/// 5. ./board.json (dev fallback)
 pub fn data_path() -> PathBuf {
     if let Ok(p) = std::env::var("TERMIBAN_DATA_PATH") {
         if !p.is_empty() {
@@ -32,18 +24,23 @@ pub fn data_path() -> PathBuf {
         }
     }
 
-    #[cfg(windows)]
-    {
-        if let Ok(appdata) = std::env::var("APPDATA") {
-            if !appdata.is_empty() {
-                return PathBuf::from(appdata).join("termiban").join("board.json");
-            }
-        }
-    }
-
     if let Ok(xdg) = std::env::var("XDG_DATA_HOME") {
         if !xdg.is_empty() {
             return PathBuf::from(xdg).join("termiban").join("board.json");
+        }
+    }
+
+    // macOS native location — preferred on macOS if HOME is set
+    #[cfg(target_os = "macos")]
+    {
+        if let Ok(home) = std::env::var("HOME") {
+            if !home.is_empty() {
+                return PathBuf::from(home)
+                    .join("Library")
+                    .join("Application Support")
+                    .join("termiban")
+                    .join("board.json");
+            }
         }
     }
 
@@ -57,26 +54,9 @@ pub fn data_path() -> PathBuf {
         }
     }
 
-    if let Ok(userprofile) = std::env::var("USERPROFILE") {
-        if !userprofile.is_empty() {
-            return PathBuf::from(userprofile)
-                .join("AppData")
-                .join("Roaming")
-                .join("termiban")
-                .join("board.json");
-        }
-    }
-
     PathBuf::from("board.json")
 }
 
-// ---------------------------------------------------------------------------
-// Load / Save helpers
-// ---------------------------------------------------------------------------
-
-/// Load board from `data_path()`, falling back to `Board::default()` on any error.
-///
-/// Errors are reported to stderr but never panic — the TUI can still start.
 pub fn load_board() -> Board {
     let path = data_path();
     if path.exists() {
@@ -94,9 +74,6 @@ pub fn load_board() -> Board {
     Board::default()
 }
 
-/// Persist board to `data_path()` as pretty JSON.
-///
-/// Creates parent directories as needed. Errors are logged to stderr.
 pub fn save_board(board: &Board) {
     let path = data_path();
     if let Some(parent) = path.parent() {
@@ -119,11 +96,9 @@ mod tests {
 
     #[test]
     fn data_path_respects_env_override() {
-        // SAFETY: single-threaded test, env vars are process-global
         unsafe { std::env::set_var("TERMIBAN_DATA_PATH", "/tmp/custom_board.json") };
         assert_eq!(data_path(), PathBuf::from("/tmp/custom_board.json"));
         unsafe { std::env::remove_var("TERMIBAN_DATA_PATH") };
-        // Should now fall back to HOME/XDG logic, not panic
         let _ = data_path();
     }
 
