@@ -164,9 +164,3 @@ cargo check
 cargo test -- --test-threads=1   # 14 tests
 cargo build --release
 ```
-
----
-
-## License
-
-MIT
