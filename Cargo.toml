@@ -2,7 +2,7 @@
 name = "termiban"
 version = "0.1.0"
 edition = "2024"
-description = "Termiban — Terminal Kanban: a self-hosted personal Kanban TUI for Linux, macOS and Windows"
+description = "Termiban — Terminal Kanban: a self-hosted personal Kanban TUI for Unix (Linux and macOS)"
 authors = ["Termiban Contributors"]
 license = "MIT"
 repository = "https://github.com/yourname/termiban"
