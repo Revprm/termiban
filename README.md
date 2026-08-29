@@ -1,6 +1,6 @@
 # Termiban — Terminal Kanban
 
-**Self-hosted personal Kanban for your terminal. Unix-only (Linux and macOS).**
+**Self-hosted personal Kanban for your terminal. Linux-only.**
 
 No cloud, no account. Your board lives as a single `board.json` on your machine. Manage tasks with deadlines, priorities, and tags — all from a fast TUI.
 
@@ -60,7 +60,7 @@ Portable data file:
 TERMIBAN_DATA_PATH=/tmp/board.json termiban
 ```
 
-**Compatibility:** Linux and macOS only. Windows is not supported.
+**Compatibility:** Linux only. macOS and Windows are not supported.
 
 ---
 
@@ -115,9 +115,8 @@ Auto-saved JSON. Location (in order):
 
 1. `$TERMIBAN_DATA_PATH` or `$TERMIBAN_DATA` if set
 2. `$XDG_DATA_HOME/termiban/board.json`
-3. macOS: `~/Library/Application Support/termiban/board.json`
-4. Linux/macOS fallback: `~/.local/share/termiban/board.json`
-5. `./board.json`
+3. `~/.local/share/termiban/board.json`
+4. `./board.json`
 
 Edit `board.json` by hand if you like:
 

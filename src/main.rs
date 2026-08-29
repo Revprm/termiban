@@ -1,5 +1,5 @@
-#[cfg(target_os = "windows")]
-compile_error!("Termiban is Unix-only (Linux and macOS) — Windows is not supported");
+#[cfg(not(target_os = "linux"))]
+compile_error!("Termiban is Linux-only — macOS and Windows are not supported");
 
 mod app;
 mod board;

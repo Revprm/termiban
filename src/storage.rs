@@ -1,17 +1,16 @@
-#[cfg(target_os = "windows")]
-compile_error!("Termiban is Unix-only (Linux and macOS) — Windows is not supported");
+#[cfg(not(target_os = "linux"))]
+compile_error!("Termiban is Linux-only — macOS and Windows are not supported");
 
 use crate::board::Board;
 use std::{fs, path::PathBuf};
 
-/// Resolve data path — Unix-only (Linux and macOS)
+/// Resolve data path — Linux-only
 ///
 /// Priority:
 /// 1. $TERMIBAN_DATA_PATH or $TERMIBAN_DATA (portable override)
-/// 2. $XDG_DATA_HOME/termiban/board.json (XDG, Linux + macOS if set)
-/// 3. ~/Library/Application Support/termiban/board.json (macOS native)
-/// 4. ~/.local/share/termiban/board.json (Linux + macOS fallback)
-/// 5. ./board.json (dev fallback)
+/// 2. $XDG_DATA_HOME/termiban/board.json (XDG)
+/// 3. ~/.local/share/termiban/board.json (fallback)
+/// 4. ./board.json (dev fallback)
 pub fn data_path() -> PathBuf {
     if let Ok(p) = std::env::var("TERMIBAN_DATA_PATH") {
         if !p.is_empty() {
@@ -27,20 +26,6 @@ pub fn data_path() -> PathBuf {
     if let Ok(xdg) = std::env::var("XDG_DATA_HOME") {
         if !xdg.is_empty() {
             return PathBuf::from(xdg).join("termiban").join("board.json");
-        }
-    }
-
-    // macOS native location — preferred on macOS if HOME is set
-    #[cfg(target_os = "macos")]
-    {
-        if let Ok(home) = std::env::var("HOME") {
-            if !home.is_empty() {
-                return PathBuf::from(home)
-                    .join("Library")
-                    .join("Application Support")
-                    .join("termiban")
-                    .join("board.json");
-            }
         }
     }
 

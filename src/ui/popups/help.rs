@@ -78,7 +78,7 @@ pub fn render_help_popup(f: &mut Frame, area: Rect) {
         Line::from(Span::styled("TIPS", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
         Line::from("  • Example: Add columns 'Backlog','Review','Blocked' via B → a"),
         Line::from("  • Example: Set Urgent + tomorrow deadline for critical tasks"),
-        Line::from("  • Unix-only: Linux and macOS — single binary `cargo build --release`"),
+        Line::from("  • Linux-only — single binary `cargo build --release`"),
         Line::from(""),
         Line::from(Span::styled("Press any key to close", Style::default().fg(Color::DarkGray).add_modifier(Modifier::ITALIC))),
     ];
